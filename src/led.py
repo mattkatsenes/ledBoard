@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import outer
 
 class Led(object):
     '''
@@ -82,7 +83,17 @@ class LedBoard(LedString):
         '''
         self.pixelArray = np.zeros((height,width,3), np.uint8)
         
-    
+    def output(self,filepath="../boards/output.board"):
+        '''
+        Writes a file with the LED color values in string order.
+        Format rellies on led.getColor()
+        newline delimited values
+        '''
+        with open(filepath, "w") as out:
+            for led in self.stringOfLights:
+                out.write(str(led.getColor()))
+                out.write("\n")
+                
 #testing code for individual LED
 myLed = Led()
 print(myLed)
@@ -102,3 +113,4 @@ for light in myString.stringOfLights:
     
 myBoard = LedBoard(2,5,4)
 print(myBoard.pixelArray)
+myBoard.output("../boards/test.board")
