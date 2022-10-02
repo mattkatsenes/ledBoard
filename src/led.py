@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import random
 
+
+
 class Led(object):
     '''
     Represents one light on our string
@@ -25,9 +27,8 @@ class Led(object):
         self.b = b 
     
     def setColorArr(self,colorArr):
-        self.r = colorArr[0]
-        self.g = colorArr[1]
-        self.b = colorArr[2]
+        self.setColor(int(colorArr[0]) ,int(colorArr[1]), int(colorArr[2]))
+        
     
     def getColor(self):
         return (self.r,self.g,self.b)
@@ -106,7 +107,35 @@ class LedBoard(LedString):
         math-y stuff we do will have to take that into account.
         '''
         self.img = np.zeros((height,width,3), np.uint8)
+        
+        '''
+        This instance variable is a one-dimensional array to 
+        match the stringOfLights array.  It contains a radius
+        particular to each LED.  The radius is half the distance
+        to the nearest other LED OR to the edge of the picture.
+        '''
+        self.radii = np.zeros(numLights,np.uint16)
     
+    def buildRadiusArray(self):
+        #I think i can do this with linear algebra...
+        
+        # build a complex array of your cells
+        z = np.array([[complex(led.x, led.y) for led in self.stringOfLights]])
+        out = abs(z.T-z)
+        
+        for index, row in enumerate(out):
+            
+            #convenience
+            x, y = self.stringOfLights[index].getPosition()
+        
+            #find min distance to edge
+            edgeDist = min(x,y,self.height-x,self.width-y)
+            
+            self.radii[index] =  min(min(i for i in row if i > 0)/2,edgeDist)
+            #print("min radius for light ", index,": ",self.radii[index])
+            #print("\tedge distance was: ",edgeDist)
+        
+            
     def setLedColorsStrict(self):
         '''
         Grabs the color from the pixel EXACTLY at the point where each LED
@@ -115,6 +144,18 @@ class LedBoard(LedString):
         for led in self.stringOfLights:
             x, y = led.getPosition()
             led.setColorArr(self.img[x][y])
+    
+    def setLedColorsCircleDynamic(self):
+        self.buildRadiusArray()
+        for i in range(self.numLights):
+            self.setLedColorCircle(i, self.radii[i])
+    
+    def setLedColorsCircle(self,radius):
+        '''
+        Sets all led colors in the string based on a fixed radius.
+        '''
+        for i in range(self.numLights):
+            self.setLedColorCircle(i,radius)
             
     def setLedColorCircle(self,ledNumber,radius):
         '''
@@ -172,7 +213,7 @@ class LedBoard(LedString):
 
 #more complicated wavy image:
 wave = cv2.imread('../assets/wavy-stripes-2.jpg')
-#print("original image shape: ",wave.shape)
+print("original image shape: ",wave.shape)
 
 
 myBoard = LedBoard(200,wave.shape[0],wave.shape[1])
@@ -189,19 +230,21 @@ myBoard.img = cv2.cvtColor(wave, cv2.COLOR_BGR2RGB)
 for led in myBoard.stringOfLights:
     led.setPosition(random.randrange(myBoard.height),random.randrange(myBoard.width))
 
+myBoard.setLedColorsCircleDynamic()
+
 
 #myBoard.setLedColorCircle(0, 10)
+
 #set all the LED colors.
-for i in range(myBoard.numLights):
-    myBoard.setLedColorCircle(i, 10)
+#myBoard.setLedColorsCircle(10)
 
 
 # #set the led colors to only what's on top of them    
 # myBoard.setLedColorsStrict()
-#
+
 #draw a circle around the where the LEDs are  in the image
-for led in myBoard.stringOfLights:
-    cv2.circle(wave,led.getPosition(),10,led.getColorBGR(),-1)    
+for index, led in enumerate(myBoard.stringOfLights):
+    cv2.circle(wave,led.getPosition(),myBoard.radii[index],led.getColorBGR(),-1)    
 
 cv2.imshow('test',wave)
 k = cv2.waitKey(0)
