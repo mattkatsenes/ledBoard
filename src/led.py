@@ -78,6 +78,36 @@ class LedString(object):
             output = output + str(led) + "\n"
         return output
     
+    def importLocations(self,filepath="../boardMaps/test.map"):
+        '''
+        Imports LED locations from a file.  
+        Loads them to the board in active memory.
+        
+        File Format:
+        
+        590,800,3 <-- height, width, channels of board image (discard this line)
+        442,393   <-- x,y of stringOfLights[0]  
+        x_1,y_1   <-- x,y of stringOfLights[1]
+        ...
+        x_n,y_n   <-- x,y of stringOfLights[n]
+        '''
+        
+        with open(filepath,"r") as input:
+            positions = input.readlines()
+        
+        assert self.numLights == len(positions)-1 , f"file should contain {self.numLights} lines, but has: {len(positions)-1}"
+
+        #get rid of size data
+        positions.pop(0)
+        
+        for i, pos in enumerate(positions):
+            xy_list = pos.split(',')
+            x = int(xy_list[0])
+            y = int(xy_list[1])
+            self.stringOfLights[i].setPosition(x,y)
+            
+        
+    
     #not sure if this is useful    
     def setColor(self,lightNum,r,g,b):
         self.stringOfLights[lightNum].setColor(r,g,b)
@@ -115,6 +145,25 @@ class LedBoard(LedString):
         to the nearest other LED OR to the edge of the picture.
         '''
         self.radii = np.zeros(numLights,np.uint16)
+    
+    def buildBoardFromFile(self,filepath):
+        '''
+        Since we can't overload the constructor, this is a
+        (obviously terrible) workaround.  I got lazy.
+        Wildly inefficient.
+        '''
+        with open(filepath,"r") as input:
+            positions = input.readlines()
+
+        test = positions[0].split(',')
+
+        height = int(test[0])
+        width = int(test[1])
+        numLeds = len(positions)-1
+        
+        #this rebuilds the object with the parameters from the file
+        self.__init__(numLeds,height,width)
+        self.importLocations(filepath)
     
     def buildRadiusArray(self):
         #I think i can do this with linear algebra...

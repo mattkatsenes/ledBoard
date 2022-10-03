@@ -7,6 +7,17 @@ import led
 import cv2
 import numpy as np
 import random
+
+
+filepath = "../boardMaps/test.map"
+
+myBoard = led.LedBoard(0, 0, 0)
+myBoard.buildBoardFromFile(filepath)
+
+print("led list:")
+for led in myBoard.stringOfLights:
+    print(led)
+
            
 # #testing code for individual LED
 # myLed = Led()
@@ -25,6 +36,9 @@ import random
 # for light in myString.stringOfLights:
 #     print(light)
 
+
+#testing code for mixing down from an image:
+'''
 #grab my green-blue stripe test image
 #gb = cv2.imread('../assets/gb_vert.jpg')
 
@@ -70,3 +84,5 @@ if k == 27 or k == ord('q'):
     cv2.destroyAllWindows()
 
 #myBoard.output("../boards/test.board")
+
+'''

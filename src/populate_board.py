@@ -1,10 +1,11 @@
-import led 
+#import led  
 import cv2
 import numpy as np
 import time
 
-NUM_LEDs = 10
+NUM_LEDs = 5
 DELAY = 1 #delay between lighting LEDs
+FILE = "../boardMaps/test.map"  #filepath to output LED positions
 
 cap = cv2.VideoCapture(0)
 
@@ -59,6 +60,16 @@ while True:
 cap.release()
 
 print(lightPositions)
+
+#open a file and write the contents of lightPositions
+#to be used in led.py
+with open(FILE, "w") as output:
+    output.write(','.join(str(x) for x in cropped.shape))
+    output.write("\n")
+    for position in lightPositions:
+        output.write(','.join(str(x) for x in position))
+        output.write("\n")
+    
 
 #find the rectangle that is our board:
 '''
