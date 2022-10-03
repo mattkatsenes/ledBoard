@@ -4,8 +4,10 @@ Testing and experimentation with our LED library.
 '''
 
 import led
-
-              
+import cv2
+import numpy as np
+import random
+           
 # #testing code for individual LED
 # myLed = Led()
 # print(myLed)
@@ -32,7 +34,7 @@ wave = cv2.imread('../assets/wavy-stripes-2.jpg')
 print("original image shape: ",wave.shape)
 
 
-myBoard = LedBoard(200,wave.shape[0],wave.shape[1])
+myBoard = led.LedBoard(200,wave.shape[0],wave.shape[1])
 
 #converts cv2 default (BGR) to our format (RGB)
 myBoard.img = cv2.cvtColor(wave, cv2.COLOR_BGR2RGB)
