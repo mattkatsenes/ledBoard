@@ -44,8 +44,8 @@ for led in myBoard.stringOfLights:
 
 
 #more complicated wavy image:
+
 wave = cv2.imread('../assets/wavy-stripes-2.jpg')
-print("original image shape: ",wave.shape)
 
 
 myBoard = led.LedBoard(200,wave.shape[0],wave.shape[1])
