@@ -7,6 +7,8 @@ import led
 import random
 import cv2
 
+linuxPath = "../assets/"
+marysPath = "c:/Users/maryc/OneDrive/Desktop/ledBoard/assets/"
 
 def stripes(aBoard, r, g, b):
     for led in aBoard.stringOfLights:
@@ -16,10 +18,10 @@ def stripes(aBoard, r, g, b):
             led.setColor(r, g, b)
     #aBoard.output('../boards/stripes.board')
 
-wave = cv2.imread('c:/Users/maryc/OneDrive/Desktop/ledBoard/assets/wavy-stripes-2.jpg')
+wave = cv2.imread(linuxPath + 'wavy-stripes-2.jpg')
 
 
-myBoard = led.LedBoard(200,wave.shape[0],wave.shape[1])
+myBoard = led.LedBoard(200, wave.shape[0], wave.shape[1])
 
 for led in myBoard.stringOfLights:
     led.setPosition(random.randrange(myBoard.height),random.randrange(myBoard.width))
