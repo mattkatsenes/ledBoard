@@ -8,11 +8,17 @@ import cv2
 import numpy as np
 import random
 
+from mary import stripes
+
 
 filepath = "../boardMaps/test.map"
 
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
+
+stripes(myBoard, 100, 100, 255)
+
+myBoard.output("../boards/stripes.board")
 
 print("led list:")
 for led in myBoard.stringOfLights:
