@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import random
+from serial import serialposix
 
 
 
@@ -238,4 +239,10 @@ class LedBoard(LedString):
             for led in self.stringOfLights:
                 out.write(str(led.getColor()))
                 out.write("\n")
+                
+    
+    def serialOut(self,serialPath="/dev/cu.usbserial-14140"):
+        arduino = serial.Serial(port=serialPath, baudrate=115200, timeout=.1)
+        #arduino.write(bytes("test",'utf_8'))
+        
   
