@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 import random
-from serial import serialposix
+import serial
+import time
 
 
 
@@ -243,6 +244,18 @@ class LedBoard(LedString):
     
     def serialOut(self,serialPath="/dev/cu.usbserial-14140"):
         arduino = serial.Serial(port=serialPath, baudrate=115200, timeout=.1)
-        #arduino.write(bytes("test",'utf_8'))
+        time.sleep(2)
         
+        
+        for index, light in enumerate(self.stringOfLights):
+            parsableString = "<"
+            parsableString += str(index)
+            parsableString += ","
+            parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
+            parsableString += ">"
+            #print(bytes(parsableString,'utf_8'))
+            arduino.write(bytes(parsableString,'utf_8'))
+            time.sleep(0.01)
+        
+        arduino.close()
   

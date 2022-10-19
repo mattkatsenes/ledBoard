@@ -14,52 +14,25 @@ from mary import stripes
 import serial
 import time
 
-arduino = serial.Serial(port='/dev/cu.usbserial-14130', baudrate=115200, timeout=.1)
-time.sleep(2)
-# def write_read(x):
-#     arduino.write(bytes(x, 'utf-8'))
-#     time.sleep(0.05)
-#     data = arduino.readline()
-#     return data
-#
-# while True:
-#     num = input("Enter a number: ") # Taking input from user
-#     value = write_read(num)
-#     print(value) # printing the value
-
-
-
-
 
 filepath = "../boardMaps/10_14_success.map"
 
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
-# for light in myBoard.stringOfLights:
-#     arduino.write(bytes(str(light.getColor()),'utf_8'))
 
-#stripes(myBoard, 100, 123, 55)
+stripes(myBoard, 100, 123, 55)
 
 #grab a test image
-pic = cv2.imread('../assets/wavy-stripes-2.jpg')
-pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
-myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+# pic = cv2.imread('../assets/wavy-stripes-2.jpg')
+#
+# #resize the image to match the board dimensions
+# pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
+# myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+# myBoard.setLedColorsCircleDynamic()
 
-myBoard.setLedColorsCircleDynamic()
+myBoard.serialOut("/dev/cu.usbserial-14130")
 
-
-for index, light in enumerate(myBoard.stringOfLights):
-    parsableString = "<"
-    parsableString += str(index)
-    parsableString += ","
-    parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
-    parsableString += ">"
-    #print(bytes(parsableString,'utf_8'))
-    arduino.write(bytes(parsableString,'utf_8'))
-    time.sleep(0.01)
-    #arduino.readline()
-    
     
     
     #arduino.write(bytes(str(index),'utf_8'))
