@@ -4,7 +4,9 @@ import random
 import serial
 import time
 
-
+#check this to make sure it is correct.  
+#Plugging the arduino into a different USB outlet changes this value.
+SERIAL_PATH = "/dev/cu.usbserial-14240"
 
 class Led(object):
     '''
@@ -22,11 +24,14 @@ class Led(object):
         
         self.x = 0
         self.y = 0
+        self.updated = False
+        
         
     def setColor(self,r,g,b):
         self.r = r
         self.g = g
-        self.b = b 
+        self.b = b
+        self.updated = True 
     
     def setColorArr(self,colorArr):
         self.setColor(int(colorArr[0]) ,int(colorArr[1]), int(colorArr[2]))
@@ -147,6 +152,18 @@ class LedBoard(LedString):
         to the nearest other LED OR to the edge of the picture.
         '''
         self.radii = np.zeros(numLights,np.uint16)
+        
+        '''
+        Initializes a serial connection to the Arduino.  This is slow, so
+        we do it when we create the object.  There's also a method to close
+        this connection.
+        '''
+        self.arduino = serial.Serial(port=SERIAL_PATH, baudrate=1000000, timeout=.1)
+        time.sleep(2) #takes a couple seconds before this is functional
+        
+        #set this to true if you want to auto-update on the Arduino with every change.
+        #not yet implemented anywhere... but perhaps a useful flag?
+        self.liveUpdate = False
     
     def buildBoardFromFile(self,filepath):
         '''
@@ -241,21 +258,23 @@ class LedBoard(LedString):
                 out.write(str(led.getColor()))
                 out.write("\n")
                 
+    def serialClose(self):
+        self.arduino.close()
     
-    def serialOut(self,serialPath="/dev/cu.usbserial-14140"):
-        arduino = serial.Serial(port=serialPath, baudrate=115200, timeout=.1)
-        time.sleep(2)
-        
-        
+    
+    def serialOut(self):
         for index, light in enumerate(self.stringOfLights):
-            parsableString = "<"
-            parsableString += str(index)
-            parsableString += ","
-            parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
-            parsableString += ">"
-            #print(bytes(parsableString,'utf_8'))
-            arduino.write(bytes(parsableString,'utf_8'))
-            time.sleep(0.01)
+            
+            if light.updated:
+                parsableString = "<"
+                parsableString += str(index)
+                parsableString += ","
+                parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
+                parsableString += ">"
+                #print(bytes(parsableString,'utf_8'))
+                self.arduino.write(bytes(parsableString,'utf_8'))
+                time.sleep(0.01)
+                light.updated = False
         
-        arduino.close()
+        
   

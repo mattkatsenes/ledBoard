@@ -21,19 +21,26 @@ myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
 
-stripes(myBoard, 100, 123, 55)
+stripes(myBoard, 200, 0, 0)
 
 #grab a test image
-# pic = cv2.imread('../assets/wavy-stripes-2.jpg')
-#
-# #resize the image to match the board dimensions
+#pic = cv2.imread('../assets/wavy-stripes-2.jpg')
+
+#resize the image to match the board dimensions
 # pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
 # myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
 # myBoard.setLedColorsCircleDynamic()
 
-myBoard.serialOut("/dev/cu.usbserial-14130")
+myBoard.serialOut()
 
-    
+stripes(myBoard, 0, 200, 0)
+
+myBoard.serialOut()
+
+stripes(myBoard, 0, 200, 0)
+myBoard.serialOut()
+
+myBoard.serialClose()    
     
     #arduino.write(bytes(str(index),'utf_8'))
     #arduino.write(bytes(str(light.getColor()),'utf_8'))
