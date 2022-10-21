@@ -6,6 +6,19 @@ This is a file for you to put use to build functions on our LED library.
 import led
 import random
 import cv2
+import time
+
+def animateLine(aBoard, i, r, g, b):
+    w = aBoard.width
+    for led in aBoard.stringOfLights:
+        x = led.x
+        if x >= i / 100 *w and x <= (i+1) / 100 *w:
+            led.setColor(r, g, b)
+            #cv2.circle(wave,led.getPosition(),20,led.getColorBGR(),-1)    
+            #cv2.imshow('test',wave)
+            #k = cv2.waitKey(0)
+            #if k == 27 or k == ord('q'):
+             #   cv2.destroyAllWindows()
 
 
 def stripes(aBoard, r, g, b):
@@ -20,14 +33,16 @@ wave = cv2.imread('c:/Users/maryc/OneDrive/Desktop/ledBoard/assets/wavy-stripes-
 
 
 myBoard = led.LedBoard(200,wave.shape[0],wave.shape[1])
-
 for led in myBoard.stringOfLights:
     led.setPosition(random.randrange(myBoard.height),random.randrange(myBoard.width))
 
-stripes(myBoard, 100, 100, 255)
-for index, led in enumerate(myBoard.stringOfLights):
-    cv2.circle(wave,led.getPosition(),20,led.getColorBGR(),-1)    
-cv2.imshow('test',wave)
-k = cv2.waitKey(0)
-if k == 27 or k == ord('q'):
-    cv2.destroyAllWindows()
+for i in range(100):
+    animateLine(myBoard, i, 200, 0, 0)
+    wave = cv2.imread('c:/Users/maryc/OneDrive/Desktop/ledBoard/assets/wavy-stripes-2.jpg')
+    for led in myBoard.stringOfLights:
+        cv2.circle(wave,led.getPosition(),20,led.getColorBGR(),-1)    
+    cv2.imshow('test',wave)
+    time.sleep(.1)
+    k = cv2.waitKey(0)
+    if k == 27 or k == ord('q'):
+        cv2.destroyAllWindows()
