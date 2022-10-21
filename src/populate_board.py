@@ -3,9 +3,10 @@ import cv2
 import numpy as np
 import time
 
-NUM_LEDs = 5
-DELAY = 1 #delay between lighting LEDs
+NUM_LEDs = 150
+DELAY = 1.1 #delay between lighting LEDs
 FILE = "../boardMaps/test.map"  #filepath to output LED positions
+THRESHOLD = 220
 
 cap = cv2.VideoCapture(0)
 
@@ -17,7 +18,7 @@ while True:
     ret, frame = cap.read()
     
     #mess with bounds here to manually crop to the right-ish size.
-    cropped = frame[10:600, 200:1000]
+    cropped = frame   #[10:600, 200:1000]
     gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)    
     
     height = int(cap.get(4))
@@ -36,10 +37,12 @@ while True:
             begun = True
             lastLedTime = time.time()
         
-    elif begun and time.time() - lastLedTime >= DELAY:
+    elif begun and time.time()-lastLedTime >= DELAY and blur[maxLoc[1]][maxLoc[0]] > THRESHOLD:
         #take snapshot
         lastLedTime = time.time()
         lightPositions.append(maxLoc)
+        
+        #print (blur[maxLoc[1]][maxLoc[0]])
         
         #draw RED circle around brightest spot for testing
         cv2.circle(cropped, maxLoc, 30, (0, 0, 255), 10)

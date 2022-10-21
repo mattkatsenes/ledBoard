@@ -8,16 +8,52 @@ import cv2
 import numpy as np
 import random
 
+from mary import stripes
 
-filepath = "../boardMaps/test.map"
+
+import serial
+import time
+
+
+filepath = "../boardMaps/10_14_success.map"
 
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
-print("led list:")
-for led in myBoard.stringOfLights:
-    print(led)
 
+stripes(myBoard, 200, 0, 0)
+
+#grab a test image
+#pic = cv2.imread('../assets/wavy-stripes-2.jpg')
+
+#resize the image to match the board dimensions
+# pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
+# myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+# myBoard.setLedColorsCircleDynamic()
+
+myBoard.serialOut()
+
+stripes(myBoard, 0, 200, 0)
+
+myBoard.serialOut()
+
+stripes(myBoard, 0, 200, 0)
+myBoard.serialOut()
+
+myBoard.serialClose()    
+    
+    #arduino.write(bytes(str(index),'utf_8'))
+    #arduino.write(bytes(str(light.getColor()),'utf_8'))
+    
+
+#myBoard.serialOut()
+#myBoard.output("../boards/stripes.board")
+
+# print("led list:")
+# for led in myBoard.stringOfLights:
+#     print(led)
+
+#arduino.close()
            
 # #testing code for individual LED
 # myLed = Led()

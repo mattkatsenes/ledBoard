@@ -3,7 +3,7 @@
 
 This is a file for you to put use to build functions on our LED library. 
 '''
-import led
+from led import *
 import random
 import cv2
 import time
@@ -20,6 +20,8 @@ def animateLine(aBoard, i, r, g, b):
             #if k == 27 or k == ord('q'):
              #   cv2.destroyAllWindows()
 
+linuxPath = "../assets/"
+marysPath = "c:/Users/maryc/OneDrive/Desktop/ledBoard/assets/"
 
 def stripes(aBoard, r, g, b):
     for led in aBoard.stringOfLights:
