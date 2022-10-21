@@ -31,7 +31,7 @@ boolean newData = false;
 //============
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(1000000);
     Serial.setTimeout(1);
 
     pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)

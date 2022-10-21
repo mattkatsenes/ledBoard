@@ -8,12 +8,16 @@ import cv2
 import numpy as np
 import random
 
-from mary import stripes
+from mary import stripes, animateLine
 
 
 import serial
 import time
 
+
+def turnOff(board):
+    for light in board.stringOfLights:
+        light.setColor(0,0,0)
 
 filepath = "../boardMaps/10_14_success.map"
 
@@ -21,27 +25,45 @@ myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
 
-stripes(myBoard, 200, 0, 0)
+
+for i in range(100):
+    animateLine(myBoard, i, 200, 0, 0)
+    #wave = cv2.imread('../assets/wavy-stripes-2.jpg')
+    myBoard.serialOut()
+
+#stripes(myBoard, 200, 0, 0)
 
 #grab a test image
-#pic = cv2.imread('../assets/wavy-stripes-2.jpg')
-
-#resize the image to match the board dimensions
+# pic = cv2.imread('../assets/wavy-stripes-2.jpg')
+# pic2 = cv2.imread('../assets/gb_vert.jpg')
+#
+# #resize the image to match the board dimensions
 # pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
 # myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
 # myBoard.setLedColorsCircleDynamic()
+#
+# cv2.imshow('pic1',pic)
+#
+# myBoard.serialOut()
+#
+# turnOff(myBoard)
+#
+# myBoard.serialOut()
+#
+# pic2 = cv2.resize(pic2, (myBoard.img.shape[0],myBoard.img.shape[1]) )
+# myBoard.img = cv2.cvtColor(pic2, cv2.COLOR_BGR2RGB)
+# myBoard.setLedColorsCircleDynamic()
+#
+# cv2.imshow('pic2',pic2)
+#
+# myBoard.serialOut()
+#
+# myBoard.serialClose()  
+#
+# k = cv2.waitKey(0)
+# if k == 27 or k == ord('q'):
+#     cv2.destroyAllWindows()  
 
-myBoard.serialOut()
-
-stripes(myBoard, 0, 200, 0)
-
-myBoard.serialOut()
-
-stripes(myBoard, 0, 200, 0)
-myBoard.serialOut()
-
-myBoard.serialClose()    
-    
     #arduino.write(bytes(str(index),'utf_8'))
     #arduino.write(bytes(str(light.getColor()),'utf_8'))
     

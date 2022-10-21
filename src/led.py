@@ -6,7 +6,14 @@ import time
 
 #check this to make sure it is correct.  
 #Plugging the arduino into a different USB outlet changes this value.
-SERIAL_PATH = "/dev/cu.usbserial-14240"
+SERIAL_PATH = "/dev/cu.usbserial-14140"
+
+from serial.tools import list_ports
+
+# port = list(list_ports.comports())
+# for p in port:
+#     if "Arduino" in p:
+#         SERIAL_PATH = p.device
 
 class Led(object):
     '''
@@ -31,7 +38,7 @@ class Led(object):
         self.r = r
         self.g = g
         self.b = b
-        self.updated = True 
+        self.updated = True
     
     def setColorArr(self,colorArr):
         self.setColor(int(colorArr[0]) ,int(colorArr[1]), int(colorArr[2]))
