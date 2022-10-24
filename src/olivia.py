@@ -4,6 +4,7 @@
 This is a file for you to put use to build functions on our LED library. Did this work?
 '''
 import led
+#it has an issue with import serial in led
 import cv2 
 import random
 import time
