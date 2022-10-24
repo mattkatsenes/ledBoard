@@ -20,8 +20,10 @@ def line(aboard, b, m, topColor, botColor):
     for led in aboard.stringOfLights:
         if led.x > (((-1 * m) * led.y) + b):
             led.setColorArr(topColor)
+            print("top")
         else:
             led.setColorArr(botColor)
+            print("bottom")
 
 def spiral(aboard, topColor, botColor, frames):
     setLedPosition(aboard)
@@ -39,10 +41,10 @@ def displayImage(aboard):
     for index, led in enumerate(aboard.stringOfLights):
         cv2.circle(wave,led.getPosition(), 10, led.getColorBGR(),-1)
 
-wave = cv2.imread('../assets/wavy-stripes-2.jpg')
-myBoard = led.LedBoard(200, wave.shape[0], wave.shape[1])
-spiral(myBoard, [0,200,0], [0,0,200], 48)
-cv2.imshow('test', wave)
-k = cv2.waitKey(0)
-if k ==27 or k == ord('q'):
-    cv2.destroyAllWindows()
+# wave = cv2.imread('../assets/wavy-stripes-2.jpg')
+# myBoard = led.LedBoard(200, wave.shape[0], wave.shape[1])
+# spiral(myBoard, [0,200,0], [0,0,200], 48)
+# cv2.imshow('test', wave)
+# k = cv2.waitKey(0)
+# if k ==27 or k == ord('q'):
+#     cv2.destroyAllWindows()

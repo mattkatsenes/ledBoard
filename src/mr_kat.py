@@ -9,6 +9,7 @@ import numpy as np
 import random
 
 from mary import stripes, animateLine
+from olivia import line
 
 
 import serial
@@ -24,12 +25,14 @@ filepath = "../boardMaps/10_14_success.map"
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
+line(myBoard,(myBoard.height/2)+(myBoard.height)*4 +5000,20,[0,100,0], [0,0,200])
+myBoard.serialOut()
 
 
-for i in range(100):
-    animateLine(myBoard, i, 200, 0, 0)
-    #wave = cv2.imread('../assets/wavy-stripes-2.jpg')
-    myBoard.serialOut()
+# for i in range(100):
+#     animateLine(myBoard, i, 200, 0, 0)
+#     #wave = cv2.imread('../assets/wavy-stripes-2.jpg')
+#     myBoard.serialOut()
 
 #stripes(myBoard, 200, 0, 0)
 

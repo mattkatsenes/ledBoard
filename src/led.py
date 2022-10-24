@@ -8,6 +8,8 @@ import time
 #Plugging the arduino into a different USB outlet changes this value.
 SERIAL_PATH = "/dev/cu.usbserial-14140"
 
+PLUGGED_IN = True
+
 from serial.tools import list_ports
 
 # port = list(list_ports.comports())
@@ -165,8 +167,9 @@ class LedBoard(LedString):
         we do it when we create the object.  There's also a method to close
         this connection.
         '''
-        self.arduino = serial.Serial(port=SERIAL_PATH, baudrate=1000000, timeout=.1)
-        time.sleep(2) #takes a couple seconds before this is functional
+        if(PLUGGED_IN):
+            self.arduino = serial.Serial(port=SERIAL_PATH, baudrate=1000000, timeout=.1)
+            time.sleep(2) #takes a couple seconds before this is functional
         
         #set this to true if you want to auto-update on the Arduino with every change.
         #not yet implemented anywhere... but perhaps a useful flag?
