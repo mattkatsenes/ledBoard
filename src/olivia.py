@@ -16,6 +16,8 @@ def halfScreen(aboard):
         else:
             led.setColor(100,0,100)
 
+#m and b are variables from y=mx+b 
+#color variables should be arrays [r,g,b]
 def line(aboard, b, m, topColor, botColor):
     for led in aboard.stringOfLights:
         if led.x > (((-1 * m) * led.y) + b):
@@ -25,6 +27,8 @@ def line(aboard, b, m, topColor, botColor):
             led.setColorArr(botColor)
             print("bottom")
 
+#color variables should be arrays [r,g,b]
+#frames are the amount of frames in the animation
 def spiral(aboard, topColor, botColor, frames):
     setLedPosition(aboard)
     for i in range(frames):
