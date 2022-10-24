@@ -30,8 +30,7 @@ def spiral(aboard, topColor, botColor, frames):
     for i in range(frames):
         b = (aboard.height/2)+i*(aboard.height/frames)*4
         line(aboard,b,2*b/aboard.width,topColor,botColor)
-        displayImage(aboard)
-        wave = cv2.imread('../assets/wavy-stripes-2.jpg')
+        aboard.serialOut()
 
 def setLedPosition(aboard):
     for led in aboard.stringOfLights:
