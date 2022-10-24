@@ -1,7 +1,7 @@
 '''
 @author Olivia
 
-This is a file for you to put use to build functions on our LED library. Did this work?
+This is a file for you to put use to build functions on our LED library. Did this work? Hello!
 '''
 import led
 #it has an issue with import serial in led
