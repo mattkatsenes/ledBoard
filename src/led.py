@@ -6,12 +6,12 @@ import time
 
 #check this to make sure it is correct.  
 #Plugging the arduino into a different USB outlet changes this value.
-SERIAL_PATH = "/dev/cu.usbserial-14140"
+SERIAL_PATH = "/dev/cu.usbserial-14240"
+#SERIAL_PATH = "/dev/tty.usbserial-14240"
 
 PLUGGED_IN = True
 
-from serial.tools import list_ports
-
+# from serial.tools import list_ports
 # port = list(list_ports.comports())
 # for p in port:
 #     if "Arduino" in p:
@@ -273,6 +273,8 @@ class LedBoard(LedString):
     
     
     def serialOut(self):
+        self.arduino.flushOutput()
+        
         for index, light in enumerate(self.stringOfLights):
             
             if light.updated:
@@ -282,9 +284,28 @@ class LedBoard(LedString):
                 parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
                 parsableString += ">"
                 #print(bytes(parsableString,'utf_8'))
+                #print(parsableString.encode())  #testing a different method
                 self.arduino.write(bytes(parsableString,'utf_8'))
-                time.sleep(0.01)
+                
+                
+                #errorCheck
+                answer = self.arduino.readline().decode('utf_8')
+                number = answer[:answer.index("\r")]
+                
+                #print(answer,number);
+                while(index != int(number)):
+                    print("error on " + str(index))
+                    print(answer,number);
+                    self.arduino.write(bytes(parsableString,'utf_8'))
+                    time.sleep(0.02)
+                    answer = self.arduino.readline().decode('utf_8')
+                    number = answer[:answer.index("\r")]
+                    
+                
+                time.sleep(0.003)
                 light.updated = False
         
-        
+        endMarker = "<" + str(self.numLights) + ",0,0,0>"
+        self.arduino.write(bytes(endMarker,'utf_8'))
+        self.arduino.readline().decode('utf_8')
   

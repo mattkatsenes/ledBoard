@@ -25,8 +25,21 @@ filepath = "../boardMaps/10_14_success.map"
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
-line(myBoard,(myBoard.height/2)+(myBoard.height)*4 +5000,20,[0,100,0], [0,0,200])
-myBoard.serialOut()
+steps = 20
+for i in range(steps):
+    for light in myBoard.stringOfLights:
+        if(light.x < (i+1)/steps*myBoard.height and light.x >= i/steps*myBoard.height):
+            light.setColor(0,200*(i+1)/steps,0)
+        elif(light.getColor() != (0,0,0)):
+            light.setColor(0,0,0)
+    
+    myBoard.serialOut()
+    #time.sleep(1)
+            
+            
+            
+# line(myBoard,(myBoard.height/2)+(myBoard.height)*4 +5000,20,[0,100,0], [0,0,200])
+# myBoard.serialOut()
 
 
 # for i in range(100):
@@ -36,23 +49,28 @@ myBoard.serialOut()
 
 #stripes(myBoard, 200, 0, 0)
 
-#grab a test image
-# pic = cv2.imread('../assets/wavy-stripes-2.jpg')
-# pic2 = cv2.imread('../assets/gb_vert.jpg')
-#
-# #resize the image to match the board dimensions
-# pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
-# myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
-# myBoard.setLedColorsCircleDynamic()
-#
-# cv2.imshow('pic1',pic)
-#
-# myBoard.serialOut()
-#
-# turnOff(myBoard)
-#
-# myBoard.serialOut()
-#
+# grab a test image
+#pic = cv2.imread('../assets/gb_vert.jpg')
+pic = cv2.imread('../assets/gb_vert.jpg')
+
+#resize the image to match the board dimensions
+pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
+myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+myBoard.setLedColorsCircleDynamic()
+
+cv2.imshow('pic',pic)
+
+time.sleep(3)
+
+#myBoard.serialOut()
+
+
+
+#turnOff(myBoard)
+
+#myBoard.serialOut()
+
+
 # pic2 = cv2.resize(pic2, (myBoard.img.shape[0],myBoard.img.shape[1]) )
 # myBoard.img = cv2.cvtColor(pic2, cv2.COLOR_BGR2RGB)
 # myBoard.setLedColorsCircleDynamic()
@@ -80,22 +98,6 @@ myBoard.serialOut()
 
 #arduino.close()
            
-# #testing code for individual LED
-# myLed = Led()
-# print(myLed)
-#
-# myLed.setColor(0, 0, 255)
-# print(myLed.distanceTo(3, 4))
-# print()
-#
-# #testing code for String of LEDS
-# myString = LedString(2)
-#
-# myString.setColor(1,0,255,0)
-# myString.stringOfLights[0].setColor(255,0,0)
-#
-# for light in myString.stringOfLights:
-#     print(light)
 
 
 #testing code for mixing down from an image:

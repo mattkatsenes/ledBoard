@@ -66,6 +66,9 @@ print(lightPositions)
 
 #open a file and write the contents of lightPositions
 #to be used in led.py
+#BUG!!! somehow, this set the dimensions BACKWARDS in the first line, 
+#as compared with the rest of the lines.
+#Right now, you must fix manuallya 
 with open(FILE, "w") as output:
     output.write(','.join(str(x) for x in cropped.shape))
     output.write("\n")
