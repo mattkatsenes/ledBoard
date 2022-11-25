@@ -155,7 +155,7 @@ class LedBoard(LedString):
     def show(self):
         for index, light in enumerate(self.stringOfLights):
             if(light.updated):
-                pixels[index] = light.getColor() 
+                self.pixels[index] = light.getColor() 
         pixels.show()
                 
 

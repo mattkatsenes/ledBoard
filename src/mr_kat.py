@@ -112,7 +112,7 @@ for i in range(steps):
 wave = cv2.imread('../assets/wavy-stripes-2.jpg')
 
 
-myBoard = led.LedBoard(200,wave.shape[0],wave.shape[1])
+myBoard = led.LedBoard(150,wave.shape[0],wave.shape[1])
 
 #converts cv2 default (BGR) to our format (RGB)
 myBoard.img = cv2.cvtColor(wave, cv2.COLOR_BGR2RGB)
