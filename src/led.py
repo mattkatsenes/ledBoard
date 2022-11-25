@@ -156,7 +156,7 @@ class LedBoard(LedString):
         for index, light in enumerate(self.stringOfLights):
             if(light.updated):
                 self.pixels[index] = light.getColor() 
-        pixels.show()
+        self.pixels.show()
                 
 
     def importLocations(self,filepath="../boardMaps/test.map"):
