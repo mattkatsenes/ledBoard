@@ -1,15 +1,17 @@
 import numpy as np
 import cv2
 import random
-import serial
+#import serial
 import time
+import board
+import neopixel
 
 #check this to make sure it is correct.  
 #Plugging the arduino into a different USB outlet changes this value.
-SERIAL_PATH = "/dev/cu.usbserial-14240"
+#SERIAL_PATH = "/dev/cu.usbserial-14240"
 #SERIAL_PATH = "/dev/tty.usbserial-14240"
 
-PLUGGED_IN = True
+#PLUGGED_IN = True
 
 # from serial.tools import list_ports
 # port = list(list_ports.comports())
@@ -94,35 +96,6 @@ class LedString(object):
             output = output + str(led) + "\n"
         return output
     
-    def importLocations(self,filepath="../boardMaps/test.map"):
-        '''
-        Imports LED locations from a file.  
-        Loads them to the board in active memory.
-        
-        File Format:
-        
-        590,800,3 <-- height, width, channels of board image (discard this line)
-        442,393   <-- x,y of stringOfLights[0]  
-        x_1,y_1   <-- x,y of stringOfLights[1]
-        ...
-        x_n,y_n   <-- x,y of stringOfLights[n]
-        '''
-        
-        with open(filepath,"r") as input:
-            positions = input.readlines()
-        
-        assert self.numLights == len(positions)-1 , f"file should contain {self.numLights} lines, but has: {len(positions)-1}"
-
-        #get rid of size data
-        positions.pop(0)
-        
-        for i, pos in enumerate(positions):
-            xy_list = pos.split(',')
-            x = int(xy_list[0])
-            y = int(xy_list[1])
-            self.stringOfLights[i].setPosition(x,y)
-            
-        
     
     #not sure if this is useful    
     def setColor(self,lightNum,r,g,b):
@@ -162,18 +135,80 @@ class LedBoard(LedString):
         '''
         self.radii = np.zeros(numLights,np.uint16)
         
+        #a neopixel object to control the board when connected to Raspberry Pi
+        self.pixels = neopixel.NeoPixel(board.D18, 150)
+        
         '''
+        DEPRECATED
         Initializes a serial connection to the Arduino.  This is slow, so
         we do it when we create the object.  There's also a method to close
         this connection.
         '''
-        if(PLUGGED_IN):
-            self.arduino = serial.Serial(port=SERIAL_PATH, baudrate=1000000, timeout=.1)
-            time.sleep(2) #takes a couple seconds before this is functional
+        # if(PLUGGED_IN):
+        #     self.arduino = serial.Serial(port=SERIAL_PATH, baudrate=500000, timeout=.1)
+        #     time.sleep(2) #takes a couple seconds before this is functional
+        #
+        # #set this to true if you want to auto-update on the Arduino with every change.
+        # #not yet implemented anywhere... but perhaps a useful flag?
+        # self.liveUpdate = False
+
+    def show(self):
+        for index, light in enumerate(self.stringOfLights):
+            if(light.updated):
+                pixels[index] = light.getColor() 
+        pixels.show()
+                
+
+    def importLocations(self,filepath="../boardMaps/test.map"):
+        '''
+        Imports LED locations from a file.  
+        Loads them to the board in active memory.
         
-        #set this to true if you want to auto-update on the Arduino with every change.
-        #not yet implemented anywhere... but perhaps a useful flag?
-        self.liveUpdate = False
+        File Format:
+        
+        590,800,3 <-- height, width, channels of board image (discard this line)
+        442,393   <-- x,y of stringOfLights[0]  
+        x_1,y_1   <-- x,y of stringOfLights[1]
+        ...
+        x_n,y_n   <-- x,y of stringOfLights[n]
+        '''
+        
+        with open(filepath,"r") as input:
+            positions = input.readlines()
+        
+        assert self.numLights == len(positions)-1 , f"file should contain {self.numLights} lines, but has: {len(positions)-1}"
+
+        #get rid of size data
+        positions.pop(0)
+        
+        #This section of code resizes the virtual pallette and shifts the x,y coordinates so they start at 0,0. 
+        max_x = 0
+        max_y = 0
+        min_x = 1000 #should be set to first one, but this is probably greater than the min.. so it should work.
+        min_y = 1000 #should be set to first one, but this is probably greater than the min.. so it should work.
+        for i, pos in enumerate(positions):
+            xy_list = pos.split(',')
+            x = int(xy_list[0])
+            y = int(xy_list[1])
+            self.stringOfLights[i].setPosition(x,y)
+            if(x < min_x):
+                min_x = x
+            if(x > max_x):
+                max_x = x
+            if(y < min_y):
+                min_y = y
+            if(y > max_y):
+                max_y = y
+        
+        max_x -= min_x
+        max_y -= min_y
+        
+        for light in self.stringOfLights:
+            light.setPosition(light.x-min_x,light.y-min_y)
+        
+        self.width = max_y
+        self.height = max_x
+
     
     def buildBoardFromFile(self,filepath):
         '''
@@ -268,44 +303,47 @@ class LedBoard(LedString):
                 out.write(str(led.getColor()))
                 out.write("\n")
                 
-    def serialClose(self):
-        self.arduino.close()
-    
-    
-    def serialOut(self):
-        self.arduino.flushOutput()
-        
-        for index, light in enumerate(self.stringOfLights):
-            
-            if light.updated:
-                parsableString = "<"
-                parsableString += str(index)
-                parsableString += ","
-                parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
-                parsableString += ">"
-                #print(bytes(parsableString,'utf_8'))
-                #print(parsableString.encode())  #testing a different method
-                self.arduino.write(bytes(parsableString,'utf_8'))
-                
-                
-                #errorCheck
-                answer = self.arduino.readline().decode('utf_8')
-                number = answer[:answer.index("\r")]
-                
-                #print(answer,number);
-                while(index != int(number)):
-                    print("error on " + str(index))
-                    print(answer,number);
-                    self.arduino.write(bytes(parsableString,'utf_8'))
-                    time.sleep(0.02)
-                    answer = self.arduino.readline().decode('utf_8')
-                    number = answer[:answer.index("\r")]
-                    
-                
-                time.sleep(0.003)
-                light.updated = False
-        
-        endMarker = "<" + str(self.numLights) + ",0,0,0>"
-        self.arduino.write(bytes(endMarker,'utf_8'))
-        self.arduino.readline().decode('utf_8')
+    '''
+    DEPRECATED arduino serial communication code.
+    '''
+    # def serialClose(self):
+    #     self.arduino.close()
+    #
+    #
+    # def serialOut(self):
+    #     self.arduino.flushOutput()
+    #
+    #     for index, light in enumerate(self.stringOfLights):
+    #
+    #         if light.updated:
+    #             parsableString = "<"
+    #             parsableString += str(index)
+    #             parsableString += ","
+    #             parsableString += str(light.r) + "," + str(light.g) + "," + str(light.b)
+    #             parsableString += ">"
+    #             #print(bytes(parsableString,'utf_8'))
+    #             #print(parsableString.encode())  #testing a different method
+    #             self.arduino.write(bytes(parsableString,'utf_8'))
+    #
+    #
+    #             #errorCheck
+    #             answer = self.arduino.readline().decode('utf_8')
+    #             number = answer[:answer.index("\r")]
+    #
+    #             #print(answer,number);
+    #             while(index != int(number)):
+    #                 print("error on " + str(index))
+    #                 print(answer,number);
+    #                 self.arduino.write(bytes(parsableString,'utf_8'))
+    #                 time.sleep(0.02)
+    #                 answer = self.arduino.readline().decode('utf_8')
+    #                 number = answer[:answer.index("\r")]
+    #
+    #
+    #             time.sleep(0.003)
+    #             light.updated = False
+    #
+    #     endMarker = "<" + str(self.numLights) + ",0,0,0>"
+    #     self.arduino.write(bytes(endMarker,'utf_8'))
+    #     self.arduino.readline().decode('utf_8')
   

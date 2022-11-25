@@ -8,24 +8,25 @@ import cv2
 import numpy as np
 import random
 
-from mary import stripes, animateLine
-from olivia import line
+# from mary import stripes, animateLine
+# from olivia import line
 
 
-import serial
+#import serial
 import time
 
 
 def turnOff(board):
     for light in board.stringOfLights:
         light.setColor(0,0,0)
+    board.show()
 
 filepath = "../boardMaps/10_14_success.map"
 
 myBoard = led.LedBoard(0, 0, 0)
 myBoard.buildBoardFromFile(filepath)
 
-steps = 20
+steps = 10
 for i in range(steps):
     for light in myBoard.stringOfLights:
         if(light.x < (i+1)/steps*myBoard.height and light.x >= i/steps*myBoard.height):
@@ -33,8 +34,8 @@ for i in range(steps):
         elif(light.getColor() != (0,0,0)):
             light.setColor(0,0,0)
     
-    myBoard.serialOut()
-    #time.sleep(1)
+    myBoard.show()
+    
             
             
             
@@ -51,18 +52,18 @@ for i in range(steps):
 
 # grab a test image
 #pic = cv2.imread('../assets/gb_vert.jpg')
-pic = cv2.imread('../assets/gb_vert.jpg')
-
-#resize the image to match the board dimensions
-pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
-myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
-myBoard.setLedColorsCircleDynamic()
-
-cv2.imshow('pic',pic)
-
-time.sleep(3)
-
-#myBoard.serialOut()
+# pic = cv2.imread('../assets/waves.jpg')
+#
+# #resize the image to match the board dimensions
+# pic = cv2.resize(pic, (myBoard.img.shape[0],myBoard.img.shape[1]) )
+# myBoard.img = cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)
+# myBoard.setLedColorsCircleDynamic()
+#
+# cv2.imshow('pic',pic)
+#
+# time.sleep(3)
+#
+# myBoard.serialOut()
 
 
 
