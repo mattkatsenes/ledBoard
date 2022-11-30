@@ -58,6 +58,7 @@ def spreadOutFrom(point, aboard, color, frames):
             dist = dist + increment
             if(distance(point, [led.x,led.y]) < dist):
                 led.setColorArr(color)
+        aboard.show()
             
 def snowfall(aboard):
     print()
