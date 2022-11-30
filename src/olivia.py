@@ -8,6 +8,7 @@ import led
 import cv2 
 import random
 import time
+import math
 
 def halfScreen(aboard):
     for led in aboard.stringOfLights:
@@ -22,27 +23,45 @@ def line(aboard, b, m, topColor, botColor):
     for led in aboard.stringOfLights:
         if led.x > (((-1 * m) * led.y) + b):
             led.setColorArr(topColor)
-            print("top")
         else:
             led.setColorArr(botColor)
-            print("bottom")
 
 #color variables should be arrays [r,g,b]
 #frames are the amount of frames in the animation
 def spiral(aboard, topColor, botColor, frames):
-    setLedPosition(aboard)
     for i in range(frames):
-        b = (aboard.height/2)+i*(aboard.height/frames)*4
-        line(aboard,b,2*b/aboard.width,topColor,botColor)
-        aboard.serialOut()
+        m = i / (1-(i/50))
+        b = (m*(0-1)*(aboard.width/2))+(aboard.height/2)
+        line(aboard,b,m,topColor,botColor)
+        aboard.show()
 
-def setLedPosition(aboard):
-    for led in aboard.stringOfLights:
-        led.setPosition(random.randrange(aboard.height), random.randrange(aboard.width))
+def distance(point1, point2):
+    return math.sqrt(abs(((point2[0] - point1[0])**2) + ((point2[1] - point1[1])**2)))
 
-def displayImage(aboard):
-    for index, led in enumerate(aboard.stringOfLights):
-        cv2.circle(wave,led.getPosition(), 10, led.getColorBGR(),-1)
+#If this doesn't work, switch height and width
+#point is [x,y], color is [r,g,b]
+def spreadOutFrom(point, aboard, color, frames):
+    if(point[0]>aboard.width/2):
+        if(point[1]>aboard.height/2):
+            max = distance([0,0],point)
+        else:
+            max = distance([0,aboard.height],point)
+    else:
+        if(point[1]>aboard.height/2):
+            max = distance([aboard.width,0],point)
+        else:
+            max = distance([width,height],point)
+    increment = max / frames
+    dist = 0
+    for i in range(frames):
+        for led in aboard.stringOfLights:
+            dist = dist + increment
+            if(distance(point, [led.x,led.y]) < dist):
+                led.setColorArr(color)
+            
+def snowfall(aboard):
+    print()
+
 
 # wave = cv2.imread('../assets/wavy-stripes-2.jpg')
 # myBoard = led.LedBoard(200, wave.shape[0], wave.shape[1])
