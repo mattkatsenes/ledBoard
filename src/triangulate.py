@@ -2,70 +2,93 @@ import re
 import math
 import numpy as np
 
+NUM_LEDs = 500
 
 ERR = -9999
 
-files = ["../boardMaps/test1.map","../boardMaps/test2.map","../boardMaps/test3.map","../boardMaps/test4.map"]
-
-#manually find the vertical axis in the picture or this is NOT going to work.
-#horizontal axis (x) center allows us to put the origin at the center of the tree.
-yCenter = 363
-xCenter = 380
+files = ["../boardMaps/tree1_12_7.map","../boardMaps/tree2_12_7.map","../boardMaps/tree3_12_7.map","../boardMaps/tree4_12_7.map"]
 
 
 #x dimension is vertical, increasing numbers move you down.
 #y dimension is horizontal, increasing numbers move you right, I think.
 #z dimension is toward camera (deduce from images 2/4).
-#Let's declare positive-Z to be toward the camera, so zero is behind tree.
-coord_array = []
 
-for file in files:
+#coord_array = []
+
+# build arrays of all corresponding OBSERVED x/y values for each light.
+xNp = np.zeros((len(files),NUM_LEDs),dtype=int)
+yNp = np.zeros((len(files),NUM_LEDs),dtype=int)
+brightness = np.zeros((len(files),NUM_LEDs),dtype=int)
+
+for filenum, file in enumerate(files):
     fin = open(file,'r')
     coords_raw = fin.readlines()
     
     coords_bits = [i.split(",") for i in coords_raw]
 
-    coords = []
+    #coords = []
 
-    for slab in coords_bits:
+    for led, slab in enumerate(coords_bits):
         new_coord = []
         for i in slab:
             new_coord.append(int(re.sub(r'[^-\d]','', i)))
-        coords.append(new_coord)
+        #coords.append(new_coord)
         #print(new_coord)
+        if(new_coord[2] == -1):
+            xNp[filenum][led] = ERR
+            yNp[filenum][led] = ERR
+            brightness[filenum][led] = -1
+        else:
+            xNp[filenum][led] = new_coord[0]
+            yNp[filenum][led] = new_coord[1]
+            brightness[filenum][led] = new_coord[2]
     
-    coord_array.append(coords)
+    #coord_array.append(coords)
     
 #print(coord_array)
 
-# build arrays of all corresponding x/y/z values for each light.
-xNp = np.zeros((len(coord_array),len(coord_array[0])),dtype=int)
-yNp = np.zeros((len(coord_array),len(coord_array[0])),dtype=int)
-#zNp = np.empty((2,len(coord_array[0])),dtype=int)
+#deduce the location of [0,0,0] by looking at good observations and guessing.
 
-#test
-#print(yNp)
+avgY = 0
+countY = 0
 
-for i, bigList in enumerate(coord_array):
-    #print(i, bigList)
-    for j, point in enumerate(bigList):
-        #print(i,j)
-        #print(point)
-        if(point[2] == -1):
-            xNp[i][j] = ERR
-            yNp[i][j] = ERR
-        else:
-            xNp[i][j] = point[0]-xCenter
-            yNp[i][j] = point[1]-yCenter
 
-        #test
-        #print(yNp)
-        
+for led in range(NUM_LEDs):
+    if(yNp[0][led] > ERR and yNp[2][led] > ERR):
+        avgY += (yNp[0][led] + yNp[2][led])/2
+        countY += 1
+    if(yNp[1][led] > ERR and yNp[3][led] > ERR):
+        avgY += (yNp[1][led] + yNp[3][led])/2
+        countY += 1
 
+
+avgY /= countY
+
+#guess the vertical middle to be half the distance to the 
+avgX = np.max(xNp) / 2
+
+print("average y value on good observations: ",avgX)
+print("x midpoint: ",avgY)
+
+#shift coordinates so the origin is at the middle of the tree
+for led in range(NUM_LEDs):
+    for f in range(len(files)):
+        if(xNp[f][led] > ERR):
+            xNp[f][led] -= avgX
+            #flip x axis around zero, otherwise moving in the positive X direction makes you go down.
+            xNp[f][led] *= -1 
+            
+        if(yNp[f][led] > ERR):
+            yNp[f][led] -= avgY
+            
+
+
+
+#Initialize our final list for output. 
 coords = []
 
 #test, should have 4 across (one from each file), numLights down.
-print(xNp.shape)
+#print(xNp.shape)
 
 #slicing practice
 #print(xNp[:,1:2])
@@ -97,50 +120,29 @@ for i in range(xNp.shape[1]):
     z = ERR
 
     for image, yVal in enumerate(yNp[:,i:i+1]):
-        #print(image, coord_array[image][i][2]) #this is the brightness level of light i in photo image
         if(image%2 == 0):
             #do y stuff
             sign = image - 1 # something on the left is on the right when tree turned around.
-            sign *= -1
-            if(coord_array[image][i][2] > maxY_brightness):
-                maxY_brightness = coord_array[image][j][2]
+            sign *= -1 #flip sign so first image is real tree position
+            if(brightness[image][i] > maxY_brightness):
+                maxY_brightness = brightness[image][i]
                 y = yNp[image][i]*sign
         else:
             #figure out z
             sign = image - 2 # something on the left is on the right when tree turned around.
-            if(coord_array[image][i][2] > maxZ_brightness):
-                maxZ_brightness = coord_array[image][j][2]
+            if(brightness[image][i] > maxZ_brightness):
+                maxZ_brightness = brightness[image][i]
                 z = yNp[image][i]*sign
-           
-            
-    
 
-    '''
 
-    maxY_brightness = 0
-    maxZ_brightness = 0
-    
-    y = ERR
-    z = ERR
-    
-    # print("i: ",i)
-    #for y & z, choose to take the data from whichever is brighter:
-    for j in range(xNp.shape[0]):
-        # print(j, coord_array[j][i][2]) #this is the brightness level of light i in photo j
-        if(j%2 == 0): #zero or pi rotation - use for y-coordinate
-            if(coord_array[i][j][2] > maxY_brightness):
-                maxY_brightness = coord_array[i][j][2]
-                y = xNp[j][i]
-        else: #rotation 1 or 3 (use for z-coordinate)
-            if(coord_array[i][j][2] > maxZ_brightness):
-                maxZ_brightness = coord_array[i][j][2]
-                z = xNp[i][j]
-                
-    '''
+
+
     coords.append([x, y, z])
-    
-print(coords)
 
+#print(coords)
+
+
+#error checking:
 countErrors = 0
 for point in coords:
     for val in point:
@@ -149,7 +151,10 @@ for point in coords:
 
 print("total number of errors: ",countErrors)
 
-#find errors, work forwards and backwards in the string until you find a good ones, then interpolate correct-ish values.
+#find errors:
+# work forwards and backwards in the string until you find a good ones, 
+# then interpolate correct-ish values.
+
 for dim in range(3):
     lastGoodIndex = -1
     for index in range(len(coords)):
@@ -197,7 +202,7 @@ print("total number of errors: ",countErrors)
 
 FILE = "../boardMaps/coords.txt"
 with open(FILE, "w") as output:
-        
+
     for coord in coords:
         output.write('[')
         output.write(', '.join(str(x) for x in coord))
