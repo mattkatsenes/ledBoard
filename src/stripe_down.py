@@ -19,7 +19,7 @@ def xmaslight():
     # some_value = int(sys.argv[0])
     
     # IMPORT THE COORDINATES - put correct filename in here.
-    coordfilename = "../boardMaps/test.map"
+    coordfilename = "../boardMaps/treeCoords-zUp.txt"
     
     fin = open(coordfilename,'r')
     coords_raw = fin.readlines()
@@ -52,18 +52,18 @@ def xmaslight():
     black = [0,0,0]
     
     while run == 1:
-        y = 0
+        z = 500
         
         
-        for i in range(50):
-            #move my stripe down (positive y direction)
-            y+=10
+        for i in range(100):
+            #move my stripe down
+            z-=10
             
             # set colors of pixels
             LED = 0
             while LED < len(coords):
                 # if within 10 of y value, light up.
-                if(abs(coords[LED][1] - y) < 10):
+                if(abs(coords[LED][2] - z) < 50):
                     pixels[LED] = stripeColor
                 else:
                     pixels[LED] = black

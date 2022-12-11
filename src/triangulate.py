@@ -199,11 +199,16 @@ for point in coords:
 print("total number of errors: ",countErrors)
 
 
+z_up = []
+for coord in coords:
+    rotated = [coord[2],coord[1],coord[0]]
+    z_up.append(rotated)
 
-FILE = "../boardMaps/coords.txt"
+
+FILE = "../boardMaps/treeCoords-zUp.txt"
 with open(FILE, "w") as output:
 
-    for coord in coords:
+    for coord in z_up:
         output.write('[')
         output.write(', '.join(str(x) for x in coord))
         output.write(']')
