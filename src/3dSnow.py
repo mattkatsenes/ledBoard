@@ -103,6 +103,8 @@ def xmaslight():
                 #move flake
                 flake = [sum(x) for x in zip(flake, gravity)]
                 flake = [sum(x) for x in zip(flake, wind)]
+                
+                #messing with flake isn't persistent, unless...
                 snowflakes[i] = flake
         
         #remove snowflakes that have landed (can't do it in previous loop because we're iterating over them)
