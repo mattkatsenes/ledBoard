@@ -37,13 +37,6 @@ def xmaslight():
     
     #set up the pixels (AKA 'LEDs')
     PIXEL_COUNT = len(coords) # this should be 500
-    
-    # testing (make sure it is loading data correctly from file) 
-    # print("number of pixels: " + str(PIXEL_COUNT))
-    # for coord in coords:
-    #     print(coord)
-    
-    
     pixels = neopixel.NeoPixel(board.D18, PIXEL_COUNT, auto_write=False)
     
     #maybe i can use this to catch a problem and stop the script?
@@ -53,10 +46,14 @@ def xmaslight():
     flakesToRemove = [] #at end of animating step remove these snowflakes.. can't remove them while iterating over the list, I suspect
     gravity = [0,0,-6] #change z value to get gravity feeling correct.
     wind = [1,2,0] #initial wind direction
-    RADIUS = 20 #snowflake light-up radius
+    windMAX = 20 #otherwise it get's up to hurricane force.
+    RADIUS = 50 #snowflake light-up radius
+    BOUNDING_BOX = 400 #box around tree to start snowflakes.  If it's not bigger than tree, flakes may all blow away!
     FREQ = 10 #every FREQ frames, generate a new snowflake.
+    INITIAL_SNOW_LEVEL = -250 #sets the initial "ground level"
+    MAX_SNOW_LEVEL = 0 #reset when snow gets here.
     
-    snowLevel = -250 #snowlevel in pixels on z axis.
+    snowLevel = INITIAL_SNOW_LEVEL #snowlevel in pixels on z axis.
     
     #frame count for generating new snowflakes.
     frame = 0
@@ -66,18 +63,21 @@ def xmaslight():
     black = [0,0,0]
     
     #set initial snow level
-    for i, pixel in enumerate(pixels):
+    for i in len(pixels):
             if(coords[i][2] <= snowLevel):
-                pixel = white
+                pixels[i] = white
     
     while run == 1:
         
+        if(snowLevel > MAX_SNOW_LEVEL):
+            snowLevel = INITIAL_SNOW_LEVEL
         
         #generate new snowflakes occasionally
         if(frame % FREQ == 0):
-            #new snowflake
-            flake = [random.randint(-200,200),random.randint(-200,200),500]
+            #new snowflake & raise snow-level by 1 pixel
+            flake = [random.randint(-1*BOUNDING_BOX,BOUNDING_BOX),random.randint(-1*BOUNDING_BOX,BOUNDING_BOX),500]
             snowflakes.append(flake)
+            snowLevel += 1
         
         #up frame count
         frame += 1
@@ -86,39 +86,58 @@ def xmaslight():
         wind[0] = wind[0] + random.randint(-1,1)
         wind[1] = wind[1] + random.randint(-1,1)
         
+        #cap the wind speed, if necessary.
+        if(abs(wind[0]) > windMAX):
+            wind[0] = int(windMAX * wind[0]/abs(wind[0]))
 
-        
+        if(abs(wind[1]) > windMAX):
+            wind[1] = int(windMAX * wind[1]/abs(wind[1]))
+
         
         #each frame, iterate through snowflakes
         for i, flake in enumerate(snowflakes):
             if(flake[2]<= snowLevel):
-                #if it's hit the ground...
+                #if it's hit the ground, mark for removal.
                 flakesToRemove.append(i)
             else:
                 #move flake
-                flake += gravity
-                flake += wind
+                flake = [sum(x) for x in zip(flake, gravity)]
+                flake = [sum(x) for x in zip(flake, wind)]
+                snowflakes[i] = flake
         
+        #remove snowflakes that have landed (can't do it in previous loop because we're iterating over them)
         for removeIndex in flakesToRemove:
             snowflakes.pop(removeIndex)
         
         #reset flakes to remove
         flakesToRemove = []
         
-        for i, pixel in enumerate(pixels):
+        for i in len(pixels):
             #turn all off pixels off except those below snow level
             if coords[i][2] > snowLevel:
-                pixel = black
+                pixels[i] = black
+            else:
+                pixels[i] = white
             #check if there's a flake nearby and turn on.
             for flake in snowflakes:
                 if(math.dist(flake,coords[i]) < RADIUS):
-                    pixel = white
-            
-        pixels.show()
+                    pixels[i] = white
         
+        #update the lights
+        pixels.show() 
+        
+        '''
+        #testing code        
+        countOn = 0
+        for i, light in enumerate(pixels):
+            if light != [0,0,0]:
+                countOn += 1
     
     
-    
+        print("iteration: ",frame)
+        print("numFlakes: ",len(snowflakes))
+        print("lights on: ",countOn)
+        '''
     
 # auto-run the code
 xmaslight()    
