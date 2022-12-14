@@ -19,6 +19,10 @@ def xmaslight():
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+    
     # IMPORT THE COORDINATES - put correct filename in here.
     coordfilename = "../boardMaps/treeCoords-zUp.txt"
     
@@ -68,6 +72,10 @@ def xmaslight():
                 pixels[i] = white
     
     while run == 1:
+        
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = 0
         
         if(snowLevel > MAX_SNOW_LEVEL):
             snowLevel = INITIAL_SNOW_LEVEL

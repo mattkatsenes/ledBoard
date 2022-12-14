@@ -1,3 +1,4 @@
+from builtins import True
 def xmaslight():  
     #NOTE THE LEDS ARE GRB COLOUR (NOT RGB)
     
@@ -18,9 +19,14 @@ def xmaslight():
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+
+    
     # IMPORT THE COORDINATES (please don't break this bit)
     
-    coordfilename = "Python/coords.txt"
+    coordfilename = "coords.txt"
 	
     fin = open(coordfilename,'r')
     coords_raw = fin.readlines()
@@ -43,6 +49,17 @@ def xmaslight():
     # Show something interesting on the tree...
     # If you're turning on a lot of LEDs at once, keep their brightness down
     # please (see the `xmaslights-spin.py` for example colours)
+    
+    run = True
+    
+    while run:
+        #do the stuff
+        pixels.show()
+        
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
+    
     
     return 'DONE'
 

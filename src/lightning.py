@@ -2,6 +2,7 @@ import math
 from os import fork
 import random
 import sys
+from builtins import True
 
 
 
@@ -182,6 +183,10 @@ def xmaslight():
 	# use simulator ( See https://github.com/DutChen18/xmastree2020 )
 	# from sim import board
 	# from sim import neopixel
+	
+	#Set a start time and a duration for running (scripts will alternate)s
+	startTime = time.time()  #start the stopwatch
+	DURATION = 300 #end after this many seconds
 
 	# IMPORT THE COORDINATES (please don't break this bit)
 	coordfilename = "Python/coords.txt"
@@ -278,10 +283,12 @@ def xmaslight():
 	cycles = 0
 
 	# yes, I just run which run is... 1?
-	run = 1
+	run = True
 	while run:
-
-		run += 1
+		#stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
+		
 		time.sleep(slow)
 		
 		max_search_radius = max_size/math.sqrt(number_of_forks_to_use)

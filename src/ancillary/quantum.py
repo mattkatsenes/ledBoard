@@ -85,6 +85,10 @@ def make_line ( length ):
     return line
 
 
+#Set a start time and a duration for running (scripts will alternate)s
+startTime = time.time()  #start the stopwatch
+DURATION = 300 #end after this many seconds
+
 # Before we finally get on with actually doing something, we need to take the coordinates for the lights from Matt's file
 coordfilename = "Python/coords.txt"
 fin = open(coordfilename,'r')

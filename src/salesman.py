@@ -33,7 +33,13 @@ if __name__ == "__main__":
     # Casting to float in case you run this on Python 2
     _max_shade_scaled = float(_max_shade) / (len(_ORDER) - 1)
 
-    while True:
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+
+    run = True
+
+    while run:
 
         # First we turn off all the lights
         for i in _ORDER:
@@ -61,3 +67,7 @@ if __name__ == "__main__":
             pixels.show()
 
         time.sleep(3)
+        
+        #stop the script if we're out of time.
+        if(time.time()-startTime > DURATION):
+            run = False

@@ -19,6 +19,10 @@ def xmaslight():
     # If you want to have user changable values, they need to be entered from the command line
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
+    
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
 
     # IMPORT THE COORDINATES (please don't break this bit)
 
@@ -121,8 +125,12 @@ def xmaslight():
             p.step(speed)
 
     # yes, I just run which run is true
-    run = 1
-    while run == 1:
+    run = True
+    while run:
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
+        
         LED = 0
         while LED < len(coords):
             coord = coords[LED]

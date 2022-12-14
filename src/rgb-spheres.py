@@ -1,3 +1,4 @@
+from numpy.typing.tests import test_runtime
 def xmaslight():
 	# This is the code from my 
 	
@@ -21,6 +22,11 @@ def xmaslight():
 	# If you want to have user changable values, they need to be entered from the command line
 	# so import sys sys and use sys.argv[0] etc
 	# some_value = int(sys.argv[0])
+	
+	#Set a start time and a duration for running (scripts will alternate)s
+	startTime = time.time()  #start the stopwatch
+	DURATION = 300 #end after this many seconds
+
 	
 	# IMPORT THE COORDINATES (please don't break this bit)
 	
@@ -108,7 +114,12 @@ def xmaslight():
 		radii[i] = random.random() * frames * increment_rates[i]
 
 	# infinitly many frames. Wohoo.
-	while True:
+	run = True
+	while run:  
+		#stop the script if we're out of time.
+		if(time.time()-startTime > DURATION):
+			run = False
+        
 		for i in range(PIXEL_COUNT):
 
 			# calculate color for current pixel. Each rgb (grb) color value is 255 * dist / max_dist

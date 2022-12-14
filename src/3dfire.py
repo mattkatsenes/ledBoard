@@ -156,10 +156,14 @@ def xmaslight():
     oldMat = matrix(MATWX, MATWY, MATWZ, treeBB)
 
     slow = 0
+    
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
 
     # yes, I just run which run is true
-    run = 1
-    while run == 1:
+    run = True
+    while run:
 
         time.sleep(slow)
 
@@ -168,6 +172,10 @@ def xmaslight():
             pixels[LED] = palette[v]
 
         pixels.show()
+        
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
 
         oldMat.copy(workMat)
 

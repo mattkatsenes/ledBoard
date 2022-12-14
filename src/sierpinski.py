@@ -168,10 +168,20 @@ def xmaslight():
     min_alt = min(heights)
     max_alt = max(heights)
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+
+    
+    
     # VARIOUS SETTINGS
     # yes, I just run which run is true
-    run = 1
-    while run == 1:
+    run = True
+    while run:
+        
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
     
         # The initial triangle. You can change the coordinates here a bit if you want the triangle bigger or smaller
         triangle = [

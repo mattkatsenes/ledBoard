@@ -6,6 +6,7 @@ import math
 
 # You are welcome to add any of these:
 import numpy as np
+from builtins import True
 
 USE_PLOT = False
 
@@ -90,6 +91,10 @@ def xmaslight():
 
 
 def rainbow_lights(pixels, coords):
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+    
     # Convert to cylindrical coordinates because who needs x,y,z
     cyl_coords_set = []
     max_z = -10000
@@ -118,8 +123,13 @@ def rainbow_lights(pixels, coords):
         fig = plt.figure()
         ax = fig.gca(projection='3d')
         plt.ion()
-
-    while(True):
+    
+    run = True
+    
+    while(run):
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
         # Get LEDs & colors
         for led_idx in range(len(pixels)):
             c = cyl_coords_set[led_idx]

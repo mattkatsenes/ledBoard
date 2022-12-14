@@ -20,6 +20,11 @@ def xmaslight():
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+
+    
     # IMPORT THE COORDINATES (please don't break this bit)
     
     coordfilename = "coords.txt"
@@ -158,8 +163,12 @@ def xmaslight():
     # yes, I just run which run is true
     reset()
 
-    run = 1
-    while run == 1:
+    run = True
+    while run:
+        
+        #stop if time has elapsed
+        if(time.time() - startTime > DURATION):
+            run = False
         
         time.sleep(slow)
 

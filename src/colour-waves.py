@@ -152,6 +152,10 @@ def xmaslight():
 	# use simulator ( See https://github.com/DutChen18/xmastree2020 )
 	# from sim import board
 	# from sim import neopixel
+	
+	#Set a start time and a duration for running (scripts will alternate)s
+	startTime = time.time()  #start the stopwatch
+	DURATION = 300 #end after this many seconds
 
 	# IMPORT THE COORDINATES (please don't break this bit)
 	coordfilename = "Python/coords.txt"
@@ -231,7 +235,7 @@ def xmaslight():
 		index += 1
 
 	cycles = 0
-
+	
 	# yes, I just run which run is... 1?
 	run = True
 	while run:
@@ -279,6 +283,9 @@ def xmaslight():
 		# use the show() option as rarely as possible as it takes ages
 		# do not use show() each time you change a LED but rather wait until you have changed them all
 		pixels.show()
+		
+		if(time.time()-startTime > DURATION):
+			run = False
 
 		#Once we shown all the spheres to use once, switch it up
 		if cycles >= number_of_spheres_to_use:

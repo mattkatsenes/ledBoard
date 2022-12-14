@@ -24,6 +24,10 @@ def xmaslight():
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+    
     # IMPORT THE COORDINATES (please don't break this bit)
     ## ok ;)
     
@@ -122,8 +126,13 @@ def xmaslight():
     startTime = time.time()
     currentTime = startTime
     lastFade = 0
-
-    while True:
+    
+    run = True
+    while run:
+        #stop the script if we're out of time.
+        if(time.time()-startTime > DURATION):
+            run = False
+        
         previousTime = currentTime
         currentTime = time.time() - startTime
         deltaTime = currentTime - previousTime

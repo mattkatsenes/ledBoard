@@ -18,6 +18,10 @@ def xmaslight():
     # so import sys sys and use sys.argv[0] etc
     # some_value = int(sys.argv[0])
     
+    #Set a start time and a duration for running (scripts will alternate)s
+    startTime = time.time()  #start the stopwatch
+    DURATION = 300 #end after this many seconds
+    
     # IMPORT THE COORDINATES (please don't break this bit)
     
     coordfilename = "coords.txt"
@@ -105,6 +109,10 @@ def xmaslight():
         # use the show() option as rarely as possible as it takes ages
         # do not use show() each time you change a LED but rather wait until you have changed them all
         pixels.show() ## Dan Walsh had to comment this out since he doesn't have LEDs. Won't work until hardware is available.
+        
+        #stop the script if we're out of time.
+        if(time.time()-startTime > DURATION):
+            run = False
         
         # now we get ready for the next cycle
         # We do this similarly to how Matt did his translating plane effect: use a static spatial coloring function,
