@@ -13,14 +13,14 @@ executable_files = []
 
 # Get .py files in this directory
 for i in range(len(all_files)):
-    if all_files[i].endswith('.py') and all_files[i] != thisFileName and not(all_files[i].startswith("BROKEN")):
+    if all_files[i].endswith('.py') and all_files[i] != thisFileName and not(all_files[i].startswith("BROKEN")) and not(all_files[i] == "template.py"):
         executable_files.append(all_files[i])
 
 
 startTime = time.time()
 DURATION = 20
 
-onPi = False #if on pi, it runs forever and the python command is different.
+onPi = True #if on pi, it runs forever and the python command is different.
       
 run = True  
 while run:

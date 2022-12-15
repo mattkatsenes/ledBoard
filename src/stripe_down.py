@@ -81,8 +81,7 @@ def xmaslight():
             
             # show (use sparingly)
             pixels.show()
-        
-s    
+            
     
 
 # auto-run the code

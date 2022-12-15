@@ -2,7 +2,6 @@ import math
 from os import fork
 import random
 import sys
-from builtins import True
 
 
 
@@ -286,8 +285,8 @@ def xmaslight():
 	run = True
 	while run:
 		#stop if time has elapsed
-        if(time.time() - startTime > DURATION):
-            run = False
+		if(time.time() - startTime > DURATION):
+			run = False
 		
 		time.sleep(slow)
 		
