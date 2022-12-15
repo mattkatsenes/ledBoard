@@ -67,7 +67,7 @@ def xmaslight():
     black = [0,0,0]
     
     #set initial snow level
-    for i in len(pixels):
+    for i in range(len(pixels)):
             if(coords[i][2] <= snowLevel):
                 pixels[i] = white
     
@@ -122,7 +122,7 @@ def xmaslight():
         #reset flakes to remove
         flakesToRemove = []
         
-        for i in len(pixels):
+        for i in range(len(pixels)):
             #turn all off pixels off except those below snow level
             if coords[i][2] > snowLevel:
                 pixels[i] = black
