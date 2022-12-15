@@ -2,9 +2,10 @@ import os
 import random
 import subprocess
 import time
+import sys
 
 #get current working directory
-path = os.getcwd()
+path = os.path.dirname(os.path.abspath(sys.argv[0]))
 thisFileName = os.path.basename(__file__)
 
 all_files = os.listdir(path)
@@ -15,7 +16,6 @@ executable_files = []
 for i in range(len(all_files)):
     if all_files[i].endswith('.py') and all_files[i] != thisFileName and not(all_files[i].startswith("BROKEN")) and not(all_files[i] == "template.py"):
         executable_files.append(all_files[i])
-
 
 startTime = time.time()
 DURATION = 20
