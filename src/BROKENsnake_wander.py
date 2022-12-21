@@ -55,7 +55,10 @@ def xmaslight():
     snakeColor = [80,0,0] 
     background = [0,0,0]
     
+    radius = 20
+    
     snakeHead = [0,0] #this list will contain the point where the snake's head is IN 2-space.
+
     
     DURATION = 3 #time (sec) for a light to stay on
     
@@ -68,13 +71,34 @@ def xmaslight():
     
     pixels.show()
     
+    theta = 0
+    increment = 10 #degrees between theta1 and theta2
     while run:
         
         #stop if time has elapsed
         if(time.time() - startTime > DURATION):
             run = False
+            
+        if(theta == 360): #so theta doesn't go to 10,000
+            theta = 0
+            
+        #snakeHead[0] = cos(theta) # does theta need to go between 0 and 2pi or 0 and 360?
+        #snakeHead[1] = sin(theta)
+        for i in range(len(pixels)):
+            #is the pixel between the lines created from theta and theta + increment
+            if(pixels[i].y >= (sin(theta)/cos(theta))*pixels[i].x and pixels[i].y <= (sin(theta + increment)/cos(theta + increment))*pixels[i].x):
+               pixels[i] = snakeColor
+            # same as the other if but the < and > are swapped for if 90<theta<270
+            if(pixels[i].y <= (sin(theta)/cos(theta))*pixels[i].x and pixels[i].y >= (sin(theta + increment)/cos(theta + increment))*pixels[i].x):
+               pixels[i] = snakeColor
+        # there are probably lots of bugs in this, sorry
+        #    like if theta is 90, 270, 85, 265
+        #    and it doesn't check if the light is in the right quadrant
         
+        # we need to add z. probably just a variable that goes from 0 to whatever the height of the tree is 
+        # and if the pixel is within 10ish units of that height and the other stuff in the if is true, then it lights up ?
         
+        theta += 1
         frame +=1 #advance the frame count
         
         #update the lights
